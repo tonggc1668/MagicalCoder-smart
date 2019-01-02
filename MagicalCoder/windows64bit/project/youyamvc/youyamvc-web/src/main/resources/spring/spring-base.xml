@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	
+	<bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:xmemcached.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+    <context:component-scan base-package="com.magicalcoder.youyamvc.app"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"    destroy-method="close">
+        <property name="driverClass" value="${youyamvc.jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${youyamvc.jdbc.url}"/>
+        <property name="user" value="${youyamvc.jdbc.user}"/>
+        <property name="password" value="${youyamvc.jdbc.password}"/>
+        <property name="minPoolSize"><value>1</value></property>
+        <property name="maxPoolSize"><value>20</value></property>
+        <property name="maxIdleTime"><value>1800</value></property>
+        <property name="acquireIncrement"><value>2</value></property>
+        <property name="maxStatements"><value>0</value></property>
+        <property name="initialPoolSize"><value>2</value></property>
+        <property name="idleConnectionTestPeriod"><value>300</value></property>
+        <property name="breakAfterAcquireFailure"><value>true</value></property>
+    </bean>
+    <!--<bean id="dataSource2" class="com.mchange.v2.c3p0.ComboPooledDataSource"    destroy-method="close">
+        <property name="driverClass" value="${server2.jdbc.driverClass}"/>
+        <property name="jdbcUrl" value="${server2.jdbc.url}"/>
+        <property name="user" value="${server2.jdbc.user}"/>
+        <property name="password" value="${server2.jdbc.password}"/>
+        <property name="minPoolSize"><value>1</value></property>
+        <property name="maxPoolSize"><value>20</value></property>
+        <property name="maxIdleTime"><value>1800</value></property>
+        <property name="acquireIncrement"><value>2</value></property>
+        <property name="maxStatements"><value>0</value></property>
+        <property name="initialPoolSize"><value>2</value></property>
+        <property name="idleConnectionTestPeriod"><value>300</value></property>
+        <property name="breakAfterAcquireFailure"><value>true</value></property>
+    </bean>-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:sqlmap/*Mapper.xml</value>
+            </list>
+        </property>
+        <property name="typeAliasesPackage">
+            <value>
+                com.magicalcoder.youyamvc.app.model
+            </value>
+        </property>
+    </bean>
+   <!-- <bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:sqlmap2/*Mapper.xml</value>
+            </list>
+        </property>
+        <property name="typeAliasesPackage">
+            <value>
+                com.magicalcoder.youyamvc.app.model2
+            </value>
+        </property>
+    </bean>-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+    <!--<bean id="sqlSessionTemplate2" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory2"/>
+    </bean>-->
+   <!-- 文件上传下载开关 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" ><value>104857600</value></property>
+    </bean>
+    <!-- 初始化字典 -->
+    <bean id="dictionaryListener" class="com.magicalcoder.youyamvc.app.dict.listener.DictionaryListener"></bean>
+
+</beans>

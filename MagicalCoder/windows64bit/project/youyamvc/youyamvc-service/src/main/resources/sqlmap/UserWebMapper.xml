@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="UserWebMapper">
+    <!-- UserWeb -->
+    <sql id="createTable">
+    DROP TABLE `user_web`;
+    CREATE TABLE `user_web` (
+        PRIMARY KEY (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '用户表' ,
+ KEY (`user_name`) , UNIQUE KEY `uniq_user_name` (`user_name`) ,
+        `user_name` varchar(20) COMMENT '登录名称'  DEFAULT  '' ,
+
+        `user_password` varchar(100) COMMENT '登录密码存储加密后的值'  DEFAULT  '' ,
+
+        `real_name` varchar(20) COMMENT '用户真名'  DEFAULT  '' ,
+
+        `score_amount` decimal(12,2) COMMENT '积分余额'  DEFAULT  '0.00' ,
+
+        `money_amount` decimal(12,2) COMMENT '现金余额'  DEFAULT  '0.00' ,
+
+        `regist_time` datetime COMMENT '注册时间'  ,
+
+        `last_login_time` datetime COMMENT '最后登录时间'  ,
+
+        `account_status` tinyint(2) COMMENT '账号状态0无效1有效'  DEFAULT  '0' ,
+
+        `sex` tinyint(1) COMMENT '性别1男0女'  DEFAULT  '0' ,
+
+        `birthday` datetime COMMENT '生日'  ,
+
+        `head_img_src` varchar(100) COMMENT '头像地址'  DEFAULT  '' ,
+
+        `account_level` tinyint(2) COMMENT '账号等级'  DEFAULT  '0' ,
+
+        `mobile` varchar(20) COMMENT '手机号'  DEFAULT  '' ,
+
+        `nickname` varchar(30) COMMENT '昵称'  DEFAULT  '' ,
+
+        `two_code_img_src` varchar(50) COMMENT '二维码图片'  DEFAULT  '' 
+    )
+    </sql>
+    <sql id="selectSqlUserWeb">
+        userWeb.id ,
+        userWeb.user_name userName,
+        userWeb.user_password userPassword,
+        userWeb.real_name realName,
+        userWeb.score_amount scoreAmount,
+        userWeb.money_amount moneyAmount,
+        userWeb.regist_time registTime,
+        userWeb.last_login_time lastLoginTime,
+        userWeb.account_status accountStatus,
+        userWeb.sex ,
+        userWeb.birthday ,
+        userWeb.head_img_src headImgSrc,
+        userWeb.account_level accountLevel,
+        userWeb.mobile ,
+        userWeb.nickname ,
+        userWeb.two_code_img_src twoCodeImgSrc
+    </sql>
+
+   <sql id="whereSqlUserWeb">
+        <if test="id!=null "> and userWeb.id = #{id}</if>
+        <if test="userName!=null "> and userWeb.user_name = #{userName}</if>
+        <if test="userPassword!=null "> and userWeb.user_password = #{userPassword}</if>
+        <if test="realName!=null "> and userWeb.real_name = #{realName}</if>
+        <if test="scoreAmount!=null "> and userWeb.score_amount = #{scoreAmount}</if>
+        <if test="moneyAmount!=null "> and userWeb.money_amount = #{moneyAmount}</if>
+        <if test="registTime!=null "> and userWeb.regist_time = #{registTime,jdbcType=TIMESTAMP}</if>
+        <if test="lastLoginTime!=null "> and userWeb.last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP}</if>
+        <if test="accountStatus!=null "> and userWeb.account_status = #{accountStatus}</if>
+        <if test="sex!=null "> and userWeb.sex = #{sex}</if>
+        <if test="birthday!=null "> and userWeb.birthday = #{birthday,jdbcType=TIMESTAMP}</if>
+        <if test="headImgSrc!=null "> and userWeb.head_img_src = #{headImgSrc}</if>
+        <if test="accountLevel!=null "> and userWeb.account_level = #{accountLevel}</if>
+        <if test="mobile!=null "> and userWeb.mobile = #{mobile}</if>
+        <if test="nickname!=null "> and userWeb.nickname = #{nickname}</if>
+        <if test="twoCodeImgSrc!=null "> and userWeb.two_code_img_src = #{twoCodeImgSrc}</if>
+                <if test="userNameFirst!=null "> and userWeb.user_name <![CDATA[=]]>
+                            #{userNameFirst}
+                </if>
+                <if test="registTimeFirst!=null "> and userWeb.regist_time <![CDATA[=]]>
+                        #{registTimeFirst,jdbcType=TIMESTAMP}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertUserWeb" parameterType="UserWeb" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into user_web (
+    <if test="id!=null">`id`,</if>
+            `user_name`,            `user_password`,            `real_name`,            `score_amount`,            `money_amount`,            `regist_time`,            `last_login_time`,            `account_status`,            `sex`,            `birthday`,            `head_img_src`,            `account_level`,            `mobile`,            `nickname`,            `two_code_img_src`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="userName==null">
+                         ''
+                </when>
+                <otherwise>#{userName}</otherwise>
+            </choose>,            <choose>
+                <when test="userPassword==null">
+                         ''
+                </when>
+                <otherwise>#{userPassword}</otherwise>
+            </choose>,            <choose>
+                <when test="realName==null">
+                         ''
+                </when>
+                <otherwise>#{realName}</otherwise>
+            </choose>,            <choose>
+                <when test="scoreAmount==null">
+                         '0.00'
+                </when>
+                <otherwise>#{scoreAmount}</otherwise>
+            </choose>,            <choose>
+                <when test="moneyAmount==null">
+                         '0.00'
+                </when>
+                <otherwise>#{moneyAmount}</otherwise>
+            </choose>,            <choose>
+                <when test="registTime==null">
+                    NULL
+                </when>
+                <otherwise>#{registTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="lastLoginTime==null">
+                    NULL
+                </when>
+                <otherwise>#{lastLoginTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="accountStatus==null">
+                         '0'
+                </when>
+                <otherwise>#{accountStatus}</otherwise>
+            </choose>,            <choose>
+                <when test="sex==null">
+                         '0'
+                </when>
+                <otherwise>#{sex}</otherwise>
+            </choose>,            <choose>
+                <when test="birthday==null">
+                    NULL
+                </when>
+                <otherwise>#{birthday,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="headImgSrc==null">
+                         ''
+                </when>
+                <otherwise>#{headImgSrc}</otherwise>
+            </choose>,            <choose>
+                <when test="accountLevel==null">
+                         '0'
+                </when>
+                <otherwise>#{accountLevel}</otherwise>
+            </choose>,            <choose>
+                <when test="mobile==null">
+                         ''
+                </when>
+                <otherwise>#{mobile}</otherwise>
+            </choose>,            <choose>
+                <when test="nickname==null">
+                         ''
+                </when>
+                <otherwise>#{nickname}</otherwise>
+            </choose>,            <choose>
+                <when test="twoCodeImgSrc==null">
+                         ''
+                </when>
+                <otherwise>#{twoCodeImgSrc}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getUserWeb" parameterType="hashmap" resultType="UserWeb">
+        select <include refid="selectSqlUserWeb"/> from user_web userWeb where 1=1 <include refid="whereSqlUserWeb"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getUserWebList" parameterType="hashmap" resultType="UserWeb">
+        select <include refid="selectSqlUserWeb"/> from user_web userWeb where 1=1 <include refid="whereSqlUserWeb"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getUserWebListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from user_web userWeb
+        where 1=1 <include refid="whereSqlUserWeb"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateUserWeb" parameterType="UserWeb">
+        update user_web userWeb set
+                <choose>
+                    <when test="userName!=null">userWeb.user_name=#{userName},</when>
+                    <otherwise>
+                        userWeb.user_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="userPassword!=null">userWeb.user_password=#{userPassword},</when>
+                    <otherwise>
+                        userWeb.user_password='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="realName!=null">userWeb.real_name=#{realName},</when>
+                    <otherwise>
+                        userWeb.real_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="scoreAmount!=null">userWeb.score_amount=#{scoreAmount},</when>
+                    <otherwise>
+                        userWeb.score_amount=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="moneyAmount!=null">userWeb.money_amount=#{moneyAmount},</when>
+                    <otherwise>
+                        userWeb.money_amount=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="registTime!=null">userWeb.regist_time=#{registTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        userWeb.regist_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="lastLoginTime!=null">userWeb.last_login_time=#{lastLoginTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        userWeb.last_login_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="accountStatus!=null">userWeb.account_status=#{accountStatus},</when>
+                    <otherwise>
+                        userWeb.account_status=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="sex!=null">userWeb.sex=#{sex},</when>
+                    <otherwise>
+                        userWeb.sex=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="birthday!=null">userWeb.birthday=#{birthday,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        userWeb.birthday=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="headImgSrc!=null">userWeb.head_img_src=#{headImgSrc},</when>
+                    <otherwise>
+                        userWeb.head_img_src='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="accountLevel!=null">userWeb.account_level=#{accountLevel},</when>
+                    <otherwise>
+                        userWeb.account_level=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="mobile!=null">userWeb.mobile=#{mobile},</when>
+                    <otherwise>
+                        userWeb.mobile='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="nickname!=null">userWeb.nickname=#{nickname},</when>
+                    <otherwise>
+                        userWeb.nickname='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="twoCodeImgSrc!=null">userWeb.two_code_img_src=#{twoCodeImgSrc},</when>
+                    <otherwise>
+                        userWeb.two_code_img_src='',
+                    </otherwise>
+                </choose>
+                userWeb.id = id
+        where 1=1
+            and userWeb.id = #{id}
+
+    </update>
+    <update id="updateUserWebWithoutNull" parameterType="UserWeb">
+        update user_web userWeb set
+                <choose>
+                    <when test="userName!=null">userWeb.user_name=#{userName},</when>
+                </choose>
+                <choose>
+                    <when test="userPassword!=null">userWeb.user_password=#{userPassword},</when>
+                </choose>
+                <choose>
+                    <when test="realName!=null">userWeb.real_name=#{realName},</when>
+                </choose>
+                <choose>
+                    <when test="scoreAmount!=null">userWeb.score_amount=#{scoreAmount},</when>
+                </choose>
+                <choose>
+                    <when test="moneyAmount!=null">userWeb.money_amount=#{moneyAmount},</when>
+                </choose>
+                <choose>
+                    <when test="registTime!=null">userWeb.regist_time=#{registTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="lastLoginTime!=null">userWeb.last_login_time=#{lastLoginTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="accountStatus!=null">userWeb.account_status=#{accountStatus},</when>
+                </choose>
+                <choose>
+                    <when test="sex!=null">userWeb.sex=#{sex},</when>
+                </choose>
+                <choose>
+                    <when test="birthday!=null">userWeb.birthday=#{birthday,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="headImgSrc!=null">userWeb.head_img_src=#{headImgSrc},</when>
+                </choose>
+                <choose>
+                    <when test="accountLevel!=null">userWeb.account_level=#{accountLevel},</when>
+                </choose>
+                <choose>
+                    <when test="mobile!=null">userWeb.mobile=#{mobile},</when>
+                </choose>
+                <choose>
+                    <when test="nickname!=null">userWeb.nickname=#{nickname},</when>
+                </choose>
+                <choose>
+                    <when test="twoCodeImgSrc!=null">userWeb.two_code_img_src=#{twoCodeImgSrc},</when>
+                </choose>
+            userWeb.id = id
+        where 1=1
+            and userWeb.id = #{id}
+
+    </update>
+    <update id="updateUserWebByWhereSql" parameterType="hashmap">
+        update user_web userWeb set
+                <choose><when test="userName!=null">userWeb.user_name=#{userName},</when></choose>
+                <choose><when test="userPassword!=null">userWeb.user_password=#{userPassword},</when></choose>
+                <choose><when test="realName!=null">userWeb.real_name=#{realName},</when></choose>
+                <choose><when test="scoreAmount!=null">userWeb.score_amount=#{scoreAmount},</when></choose>
+                <choose><when test="moneyAmount!=null">userWeb.money_amount=#{moneyAmount},</when></choose>
+                <choose><when test="registTime!=null">userWeb.regist_time=#{registTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="lastLoginTime!=null">userWeb.last_login_time=#{lastLoginTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="accountStatus!=null">userWeb.account_status=#{accountStatus},</when></choose>
+                <choose><when test="sex!=null">userWeb.sex=#{sex},</when></choose>
+                <choose><when test="birthday!=null">userWeb.birthday=#{birthday,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="headImgSrc!=null">userWeb.head_img_src=#{headImgSrc},</when></choose>
+                <choose><when test="accountLevel!=null">userWeb.account_level=#{accountLevel},</when></choose>
+                <choose><when test="mobile!=null">userWeb.mobile=#{mobile},</when></choose>
+                <choose><when test="nickname!=null">userWeb.nickname=#{nickname},</when></choose>
+                <choose><when test="twoCodeImgSrc!=null">userWeb.two_code_img_src=#{twoCodeImgSrc},</when></choose>
+            userWeb.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateUserWeb">
+        truncate table user_web
+    </delete>
+
+    <delete id="deleteUserWeb" parameterType="hashmap">
+        delete userWeb from user_web userWeb where 1=1
+            and userWeb.id = #{id}
+    </delete>
+
+    <delete id="deleteUserWebList" parameterType="hashmap">
+        delete userWeb from user_web userWeb where
+        <include refid="whereSqlUserWeb"/>
+    </delete>
+
+    <delete id="deleteUserWebByWhereSql" parameterType="hashmap">
+        delete userWeb from user_web userWeb where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteUserWeb" parameterType="java.util.List">
+        delete userWeb from user_web userWeb where userWeb.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteUserWebList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete userWeb from user_web userWeb where
+            1=1
+                    and userWeb.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertUserWeb" parameterType="java.util.List">
+        insert into user_web (
+            `user_name`,
+            `user_password`,
+            `real_name`,
+            `score_amount`,
+            `money_amount`,
+            `regist_time`,
+            `last_login_time`,
+            `account_status`,
+            `sex`,
+            `birthday`,
+            `head_img_src`,
+            `account_level`,
+            `mobile`,
+            `nickname`,
+            `two_code_img_src`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.userName==null">  ''  </when><otherwise>#{item.userName}</otherwise></choose> ,
+                <choose><when test="item.userPassword==null">  ''  </when><otherwise>#{item.userPassword}</otherwise></choose> ,
+                <choose><when test="item.realName==null">  ''  </when><otherwise>#{item.realName}</otherwise></choose> ,
+                <choose><when test="item.scoreAmount==null">  '0.00'  </when><otherwise>#{item.scoreAmount}</otherwise></choose> ,
+                <choose><when test="item.moneyAmount==null">  '0.00'  </when><otherwise>#{item.moneyAmount}</otherwise></choose> ,
+                <choose><when test="item.registTime==null">NULL</when><otherwise>#{item.registTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.lastLoginTime==null">NULL</when><otherwise>#{item.lastLoginTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.accountStatus==null">  '0'  </when><otherwise>#{item.accountStatus}</otherwise></choose> ,
+                <choose><when test="item.sex==null">  '0'  </when><otherwise>#{item.sex}</otherwise></choose> ,
+                <choose><when test="item.birthday==null">NULL</when><otherwise>#{item.birthday,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.headImgSrc==null">  ''  </when><otherwise>#{item.headImgSrc}</otherwise></choose> ,
+                <choose><when test="item.accountLevel==null">  '0'  </when><otherwise>#{item.accountLevel}</otherwise></choose> ,
+                <choose><when test="item.mobile==null">  ''  </when><otherwise>#{item.mobile}</otherwise></choose> ,
+                <choose><when test="item.nickname==null">  ''  </when><otherwise>#{item.nickname}</otherwise></choose> ,
+                <choose><when test="item.twoCodeImgSrc==null">  ''  </when><otherwise>#{item.twoCodeImgSrc}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateUserWeb"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update user_web userWeb
+            <set>
+                <choose><when test="item.userName!=null">userWeb.user_name=#{item.userName},</when></choose>
+                <choose><when test="item.userPassword!=null">userWeb.user_password=#{item.userPassword},</when></choose>
+                <choose><when test="item.realName!=null">userWeb.real_name=#{item.realName},</when></choose>
+                <choose><when test="item.scoreAmount!=null">userWeb.score_amount=#{item.scoreAmount},</when></choose>
+                <choose><when test="item.moneyAmount!=null">userWeb.money_amount=#{item.moneyAmount},</when></choose>
+                <choose><when test="item.registTime!=null">userWeb.regist_time=#{item.registTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.lastLoginTime!=null">userWeb.last_login_time=#{item.lastLoginTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.accountStatus!=null">userWeb.account_status=#{item.accountStatus},</when></choose>
+                <choose><when test="item.sex!=null">userWeb.sex=#{item.sex},</when></choose>
+                <choose><when test="item.birthday!=null">userWeb.birthday=#{item.birthday,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.headImgSrc!=null">userWeb.head_img_src=#{item.headImgSrc},</when></choose>
+                <choose><when test="item.accountLevel!=null">userWeb.account_level=#{item.accountLevel},</when></choose>
+                <choose><when test="item.mobile!=null">userWeb.mobile=#{item.mobile},</when></choose>
+                <choose><when test="item.nickname!=null">userWeb.nickname=#{item.nickname},</when></choose>
+                <choose><when test="item.twoCodeImgSrc!=null">userWeb.two_code_img_src=#{item.twoCodeImgSrc},</when></choose>
+                    userWeb.id = id
+            </set>
+            where 1=1
+                and userWeb.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 799374340@qq.com
+-->
+<mapper namespace="RoleModulePriorityProxyMapper">
+        <!-- 角色拥有哪些模块-->
+        <select id="roleHasModuleList" parameterType="hashmap" resultType="Module">
+                select m.id,m.module_name moduleName,m.module_url moduleUrl,m.module_category_id moduleCategoryId,m.sort_num sortNum,m.module_title moduleTitle
+                from role_module_priority rmp,module m
+                where rmp.module_id = m.id and rmp.role_id=#{roleId} order by sort_num asc
+        </select>
+
+        <!-- 角色对应的模块拥有哪些权限-->
+        <select id="roleModuleHasPriority" parameterType="hashmap" resultType="Priority">
+                select p.id,p.priority_name priorityName,p.can_insert canInsert,p.can_delete canDelete,p.can_update canUpdate,p.can_query canQuery
+                ,p.can_truncate canTruncate,p.can_import canImport,p.can_export canExport
+                from role_module_priority rmp,module m,priority p
+                where rmp.module_id = m.id and rmp.priority_id=p.id and m.module_name=#{moduleName} and rmp.role_id=#{roleId}
+        </select>
+
+</mapper>

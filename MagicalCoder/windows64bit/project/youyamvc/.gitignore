@@ -1,0 +1,4 @@
+*.iml
+youyamvc-core/target/
+youyamvc-service/target/
+youyamvc-web/target/

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="PriorityMapper">
+    <!-- Priority -->
+    <sql id="createTable">
+    DROP TABLE `priority`;
+    CREATE TABLE `priority` (
+        PRIMARY KEY (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '主键' ,
+
+        `priority_name` varchar(20) COMMENT '权限名'  DEFAULT  '' ,
+
+        `can_insert` char(1) COMMENT '新增'  DEFAULT  '0' ,
+
+        `can_delete` char(1) COMMENT '删除'  DEFAULT  '0' ,
+
+        `can_update` char(1) COMMENT '编辑'  DEFAULT  '0' ,
+
+        `can_query` char(1) COMMENT '查询'  DEFAULT  '0' ,
+
+        `can_truncate` char(1) COMMENT '清空'  DEFAULT  '0' ,
+
+        `can_export` char(1) COMMENT '导出'  DEFAULT  '0' ,
+
+        `can_import` char(1) COMMENT '导入'  DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlPriority">
+        priority.id ,
+        priority.priority_name priorityName,
+        priority.can_insert canInsert,
+        priority.can_delete canDelete,
+        priority.can_update canUpdate,
+        priority.can_query canQuery,
+        priority.can_truncate canTruncate,
+        priority.can_export canExport,
+        priority.can_import canImport
+    </sql>
+
+   <sql id="whereSqlPriority">
+        <if test="id!=null "> and priority.id = #{id}</if>
+        <if test="priorityName!=null "> and priority.priority_name = #{priorityName}</if>
+        <if test="canInsert!=null "> and priority.can_insert = #{canInsert}</if>
+        <if test="canDelete!=null "> and priority.can_delete = #{canDelete}</if>
+        <if test="canUpdate!=null "> and priority.can_update = #{canUpdate}</if>
+        <if test="canQuery!=null "> and priority.can_query = #{canQuery}</if>
+        <if test="canTruncate!=null "> and priority.can_truncate = #{canTruncate}</if>
+        <if test="canExport!=null "> and priority.can_export = #{canExport}</if>
+        <if test="canImport!=null "> and priority.can_import = #{canImport}</if>
+                <if test="priorityNameFirst!=null "> and priority.priority_name <![CDATA[like]]>
+                            concat('%',#{priorityNameFirst},'%')
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertPriority" parameterType="Priority" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into priority (
+    <if test="id!=null">`id`,</if>
+            `priority_name`,            `can_insert`,            `can_delete`,            `can_update`,            `can_query`,            `can_truncate`,            `can_export`,            `can_import`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="priorityName==null">
+                         ''
+                </when>
+                <otherwise>#{priorityName}</otherwise>
+            </choose>,            <choose>
+                <when test="canInsert==null">
+                         '0'
+                </when>
+                <otherwise>#{canInsert}</otherwise>
+            </choose>,            <choose>
+                <when test="canDelete==null">
+                         '0'
+                </when>
+                <otherwise>#{canDelete}</otherwise>
+            </choose>,            <choose>
+                <when test="canUpdate==null">
+                         '0'
+                </when>
+                <otherwise>#{canUpdate}</otherwise>
+            </choose>,            <choose>
+                <when test="canQuery==null">
+                         '0'
+                </when>
+                <otherwise>#{canQuery}</otherwise>
+            </choose>,            <choose>
+                <when test="canTruncate==null">
+                         '0'
+                </when>
+                <otherwise>#{canTruncate}</otherwise>
+            </choose>,            <choose>
+                <when test="canExport==null">
+                         '0'
+                </when>
+                <otherwise>#{canExport}</otherwise>
+            </choose>,            <choose>
+                <when test="canImport==null">
+                         '0'
+                </when>
+                <otherwise>#{canImport}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getPriority" parameterType="hashmap" resultType="Priority">
+        select <include refid="selectSqlPriority"/> from priority priority where 1=1 <include refid="whereSqlPriority"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getPriorityList" parameterType="hashmap" resultType="Priority">
+        select <include refid="selectSqlPriority"/> from priority priority where 1=1 <include refid="whereSqlPriority"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getPriorityListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from priority priority
+        where 1=1 <include refid="whereSqlPriority"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updatePriority" parameterType="Priority">
+        update priority priority set
+                <choose>
+                    <when test="priorityName!=null">priority.priority_name=#{priorityName},</when>
+                    <otherwise>
+                        priority.priority_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canInsert!=null">priority.can_insert=#{canInsert},</when>
+                    <otherwise>
+                        priority.can_insert='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canDelete!=null">priority.can_delete=#{canDelete},</when>
+                    <otherwise>
+                        priority.can_delete='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canUpdate!=null">priority.can_update=#{canUpdate},</when>
+                    <otherwise>
+                        priority.can_update='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canQuery!=null">priority.can_query=#{canQuery},</when>
+                    <otherwise>
+                        priority.can_query='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canTruncate!=null">priority.can_truncate=#{canTruncate},</when>
+                    <otherwise>
+                        priority.can_truncate='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canExport!=null">priority.can_export=#{canExport},</when>
+                    <otherwise>
+                        priority.can_export='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="canImport!=null">priority.can_import=#{canImport},</when>
+                    <otherwise>
+                        priority.can_import='0',
+                    </otherwise>
+                </choose>
+                priority.id = id
+        where 1=1
+            and priority.id = #{id}
+
+    </update>
+    <update id="updatePriorityWithoutNull" parameterType="Priority">
+        update priority priority set
+                <choose>
+                    <when test="priorityName!=null">priority.priority_name=#{priorityName},</when>
+                </choose>
+                <choose>
+                    <when test="canInsert!=null">priority.can_insert=#{canInsert},</when>
+                </choose>
+                <choose>
+                    <when test="canDelete!=null">priority.can_delete=#{canDelete},</when>
+                </choose>
+                <choose>
+                    <when test="canUpdate!=null">priority.can_update=#{canUpdate},</when>
+                </choose>
+                <choose>
+                    <when test="canQuery!=null">priority.can_query=#{canQuery},</when>
+                </choose>
+                <choose>
+                    <when test="canTruncate!=null">priority.can_truncate=#{canTruncate},</when>
+                </choose>
+                <choose>
+                    <when test="canExport!=null">priority.can_export=#{canExport},</when>
+                </choose>
+                <choose>
+                    <when test="canImport!=null">priority.can_import=#{canImport},</when>
+                </choose>
+            priority.id = id
+        where 1=1
+            and priority.id = #{id}
+
+    </update>
+    <update id="updatePriorityByWhereSql" parameterType="hashmap">
+        update priority priority set
+                <choose><when test="priorityName!=null">priority.priority_name=#{priorityName},</when></choose>
+                <choose><when test="canInsert!=null">priority.can_insert=#{canInsert},</when></choose>
+                <choose><when test="canDelete!=null">priority.can_delete=#{canDelete},</when></choose>
+                <choose><when test="canUpdate!=null">priority.can_update=#{canUpdate},</when></choose>
+                <choose><when test="canQuery!=null">priority.can_query=#{canQuery},</when></choose>
+                <choose><when test="canTruncate!=null">priority.can_truncate=#{canTruncate},</when></choose>
+                <choose><when test="canExport!=null">priority.can_export=#{canExport},</when></choose>
+                <choose><when test="canImport!=null">priority.can_import=#{canImport},</when></choose>
+            priority.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncatePriority">
+        truncate table priority
+    </delete>
+
+    <delete id="deletePriority" parameterType="hashmap">
+        delete priority from priority priority where 1=1
+            and priority.id = #{id}
+    </delete>
+
+    <delete id="deletePriorityList" parameterType="hashmap">
+        delete priority from priority priority where
+        <include refid="whereSqlPriority"/>
+    </delete>
+
+    <delete id="deletePriorityByWhereSql" parameterType="hashmap">
+        delete priority from priority priority where ${whereSql}
+    </delete>
+
+    <delete id="batchDeletePriority" parameterType="java.util.List">
+        delete priority from priority priority where priority.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeletePriorityList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete priority from priority priority where
+            1=1
+                    and priority.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertPriority" parameterType="java.util.List">
+        insert into priority (
+            `priority_name`,
+            `can_insert`,
+            `can_delete`,
+            `can_update`,
+            `can_query`,
+            `can_truncate`,
+            `can_export`,
+            `can_import`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.priorityName==null">  ''  </when><otherwise>#{item.priorityName}</otherwise></choose> ,
+                <choose><when test="item.canInsert==null">  '0'  </when><otherwise>#{item.canInsert}</otherwise></choose> ,
+                <choose><when test="item.canDelete==null">  '0'  </when><otherwise>#{item.canDelete}</otherwise></choose> ,
+                <choose><when test="item.canUpdate==null">  '0'  </when><otherwise>#{item.canUpdate}</otherwise></choose> ,
+                <choose><when test="item.canQuery==null">  '0'  </when><otherwise>#{item.canQuery}</otherwise></choose> ,
+                <choose><when test="item.canTruncate==null">  '0'  </when><otherwise>#{item.canTruncate}</otherwise></choose> ,
+                <choose><when test="item.canExport==null">  '0'  </when><otherwise>#{item.canExport}</otherwise></choose> ,
+                <choose><when test="item.canImport==null">  '0'  </when><otherwise>#{item.canImport}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdatePriority"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update priority priority
+            <set>
+                <choose><when test="item.priorityName!=null">priority.priority_name=#{item.priorityName},</when></choose>
+                <choose><when test="item.canInsert!=null">priority.can_insert=#{item.canInsert},</when></choose>
+                <choose><when test="item.canDelete!=null">priority.can_delete=#{item.canDelete},</when></choose>
+                <choose><when test="item.canUpdate!=null">priority.can_update=#{item.canUpdate},</when></choose>
+                <choose><when test="item.canQuery!=null">priority.can_query=#{item.canQuery},</when></choose>
+                <choose><when test="item.canTruncate!=null">priority.can_truncate=#{item.canTruncate},</when></choose>
+                <choose><when test="item.canExport!=null">priority.can_export=#{item.canExport},</when></choose>
+                <choose><when test="item.canImport!=null">priority.can_import=#{item.canImport},</when></choose>
+                    priority.id = id
+            </set>
+            where 1=1
+                and priority.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

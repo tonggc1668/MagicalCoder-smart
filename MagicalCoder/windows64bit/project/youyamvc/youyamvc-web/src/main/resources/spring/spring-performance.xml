@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	
+	<!-- 配置性能监控器 -->
+	<bean id="performanceInterceptor" class="org.springframework.aop.interceptor.PerformanceMonitorInterceptor"/>
+	
+	<!-- 通过AOP添加性能监控  -->
+	<aop:config>
+	    <aop:pointcut id="webHandler" expression="execution(public * com.magicalcoder.youyamvc.web.controller..*Controller.*(..))" />
+	    <aop:pointcut id="service" expression="execution(* com.magicalcoder.youyamvc.app..service.*Service.*(..))" />
+	    <aop:pointcut id="dao" expression="execution(* com.magicalcoder.youyamvc.app..dao.*Dao.*(..))" />
+	    
+		<aop:advisor advice-ref="performanceInterceptor" pointcut-ref="webHandler"/>
+		<aop:advisor advice-ref="performanceInterceptor" pointcut-ref="service"/>
+		<!--  
+		<aop:advisor advice-ref="performanceInterceptor" pointcut-ref="dao"/>
+		-->
+	</aop:config>
+	
+</beans>

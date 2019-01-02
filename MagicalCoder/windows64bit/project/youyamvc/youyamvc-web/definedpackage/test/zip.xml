@@ -1,0 +1,49 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>test</id>
+	<!-- 发布环境打包 -->
+	<formats>
+		<format>dir</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+            <!-- 从这个目录拷贝-->
+			<directory>${project.basedir}\target\classes</directory>
+			<excludes>
+			<!-- 忽略这些已经存在20中的文件否则20就不能替换了 -->
+				<exclude>${project.basedir}\jdbc.properties</exclude>
+				<exclude>${project.basedir}\system.properties</exclude>
+                <exclude>${project.basedir}\xmemcached.properties</exclude>
+                <exclude>${project.basedir}\log4j.properties</exclude>
+			</excludes>
+            <!-- 拷贝到下面目录-->
+			<outputDirectory>WEB-INF/classes</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}\definedpackage\test</directory>
+			<excludes>
+			<!-- zip.xml是不需要的  -->
+				<exclude>${project.basedir}\zip.xml</exclude>
+			</excludes>
+			<outputDirectory>WEB-INF/classes</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}\src\main\webapp</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+	<!-- jar包打出-->
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>WEB-INF/lib</outputDirectory>
+			<excludes>
+				<exclude>*:war</exclude><!-- 忽略war包 -->
+			</excludes>
+			<scope>runtime</scope><!-- 所有jar scope类型为runtime -->
+		</dependencySet>
+	</dependencySets>
+	 
+</assembly>

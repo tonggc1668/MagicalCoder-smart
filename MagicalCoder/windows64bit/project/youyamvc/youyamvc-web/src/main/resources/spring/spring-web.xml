@@ -1,0 +1,65 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+	<context:component-scan base-package="com.magicalcoder.youyamvc.web" />
+    <context:component-scan base-package="com.magicalcoder.youyamvc.app" />
+	<mvc:annotation-driven />
+    <context:annotation-config/>
+	 <!--
+	 <mvc:resources mapping="/assets/**"  location="/youyamvc-web/assets/"/>     
+         <mvc:default-servlet-handler />
+	-->
+
+    <!-- 多视图并存 begin-->
+    <bean id="velocityConfigurer"
+          class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath"  value="/WEB-INF/vm" /><!-- 模板位置-->
+        <property name="configLocation" value="classpath:velocity.properties" />
+    </bean>
+    <bean id="velocityViewResolver"
+          class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="viewClass"
+                  value="org.springframework.web.servlet.view.velocity.VelocityView" />
+        <property name="viewNames" value="*.vm"/>
+        <property name="order" value="0"/><!-- 优先匹配.vm结尾的视图-->
+        <!--<property name="suffix" value=".vm" />--><!-- 无需前缀 否则会跟resourceLoaderPath冲突-->
+        <!-- 避免乱码 -->
+        <property name="contentType" value="text/html;charset=UTF-8" />
+		<!-- 合并request值-->
+		<property name="exposeRequestAttributes" value="true"/>
+    </bean>
+
+	<bean id="jspViewResolver"
+    		class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+	        <property name="viewClass"  
+	            value="org.springframework.web.servlet.view.JstlView" />  
+	        <property name="prefix" value="/WEB-INF/jsp/" />
+			<!--<property name="viewNames" value="*jsp"/>-->
+			<property name="order" value="1"/><!-- 无法匹配.vm结尾的视图则使用jsp模板-->
+	        <property name="suffix" value=".jsp" />
+	</bean>
+    <!-- 多视图并存 end-->
+
+
+  	<mvc:interceptors>
+  			<!-- 所有请求 -->
+		   <bean class="com.magicalcoder.youyamvc.web.interceptor.ContextInterceptor"/>
+		   <mvc:interceptor>
+		   		<!-- 只过滤后台用户登录 -->
+                <mvc:mapping path="/admin/**"/>
+			    <bean class="com.magicalcoder.youyamvc.web.interceptor.AdminLoginInterceptor"/>
+		   </mvc:interceptor>
+		   <mvc:interceptor>
+			   <mvc:mapping path="/user/**"/>
+			   <bean class="com.magicalcoder.youyamvc.web.interceptor.OnlineLoginInterceptor"/>
+		   </mvc:interceptor>
+	</mvc:interceptors>  
+</beans>

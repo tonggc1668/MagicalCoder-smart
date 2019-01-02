@@ -1,0 +1,8 @@
+{
+	"loginPassword":"hedongyu",
+	"loginUserName":"admin",
+	"mysqlIp":"hedypc",
+	"mysqlPassword":"",
+	"mysqlPort":"3306",
+	"mysqlUserName":"root"
+}

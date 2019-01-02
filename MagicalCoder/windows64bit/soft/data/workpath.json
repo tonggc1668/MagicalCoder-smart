@@ -1,0 +1,17 @@
+[
+	{
+		"databaseName":"zookeeper",
+		"fileEncode":"UTF-8",
+		"path":"E:\\ideaproject\\homejob\\zookeeper"
+	},
+	{
+		"databaseName":"youyamvc",
+		"fileEncode":"UTF-8",
+		"path":"E:\\workspace\\magicalcoder\\youyamvc"
+	},
+	{
+		"databaseName":"gamezoo2",
+		"fileEncode":"UTF-8",
+		"path":"E:\\ideaproject\\homejob\\gamezoo2"
+	}
+]

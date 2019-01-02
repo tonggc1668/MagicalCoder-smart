@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+        "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>wy-tags</short-name>
+  <uri>/wy-tags</uri>
+  <!-- 分页标签 -->
+  <tag>
+    <name>paging</name>
+    <tag-class>com.magicalcoder.youyamvc.core.tag.paging.tags.PagingTag</tag-class>
+    <attribute>
+    	<name>bean</name>
+    	<required>false</required>
+    </attribute>
+    <attribute>
+    	<name>listMethod</name>
+    	<required>true</required>
+    	<description>查询list方法</description>
+    </attribute>
+   <attribute>
+    	<name>countMethod</name>
+    	<required>false</required>
+    	<description>查询总条数方法</description>
+    </attribute>
+   <attribute>
+    	<name>pSize</name>
+    	<required>false</required>
+    	<description>每页显示多少条</description>
+    </attribute>
+  </tag>
+  <tag>
+    <name>paging-style</name>
+    <tag-class>com.magicalcoder.youyamvc.core.tag.paging.tags.PagingStyle</tag-class>
+   <body-content>empty</body-content>
+   <attribute>
+    	<name>type</name>
+    	<required>false</required>
+    	<description>1需要总数countMethod 0 2不需要countMethod</description>
+    </attribute>
+    <attribute>
+    	<name>show</name>
+    	<required>false</required>
+    	<description>flps:f:首页  l:尾页  p:第几页 s:共几页</description>
+    </attribute>
+  </tag>
+</taglib>

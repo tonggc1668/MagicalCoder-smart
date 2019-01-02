@@ -1,0 +1,11 @@
+##详情页
+<div class="tydb-equip">
+     haha
+            <span class="tydb-skill-type">$!name</span><br/>
+    $BaseTypeUtil.toLong("1")
+    #set($studentService2 = $SpringContainer.getBean("studentService"))
+    set($student = $studentService.selectOneStudentWillThrowException($MapUtil.buildMap("id",$BaseTypeUtil.toLong("1"))));
+    #set($student = $studentService.getStudent($BaseTypeUtil.toLong("1")));
+    $student.name
+
+</div>

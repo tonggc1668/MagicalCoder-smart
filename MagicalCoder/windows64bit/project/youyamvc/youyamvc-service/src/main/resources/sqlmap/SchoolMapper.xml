@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="SchoolMapper">
+    <!-- School -->
+    <sql id="createTable">
+    DROP TABLE `school`;
+    CREATE TABLE `school` (
+        PRIMARY KEY (`id`) , KEY (`id`) , UNIQUE KEY `uniq_id` (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '学校主键' ,
+
+        `school_name` varchar(50) COMMENT '学校名称'  DEFAULT  '' ,
+
+        `head_img` varchar(50) COMMENT '学校头像'  DEFAULT  '' ,
+
+        `class_count` int(4) COMMENT '班级个数'  DEFAULT  '0' ,
+
+        `adress` text COMMENT '学校地址'  DEFAULT  NULL ,
+
+        `school_type` tinyint(2) COMMENT '学校类型'  DEFAULT  '0' ,
+
+        `open` char(1) COMMENT '是否开学'  DEFAULT  '0' ,
+
+        `create_time` datetime COMMENT '创建时间'  ,
+
+        `school_desc` longtext COMMENT '学校描述'  DEFAULT  NULL ,
+
+        `update_time` datetime COMMENT '更新时间'  
+    )
+    </sql>
+    <sql id="selectSqlSchool">
+        school.id ,
+        school.school_name schoolName,
+        school.head_img headImg,
+        school.class_count classCount,
+        school.adress ,
+        school.school_type schoolType,
+        school.open ,
+        school.create_time createTime,
+        school.school_desc schoolDesc,
+        school.update_time updateTime
+    </sql>
+
+   <sql id="whereSqlSchool">
+        <if test="id!=null "> and school.id = #{id}</if>
+        <if test="schoolName!=null "> and school.school_name = #{schoolName}</if>
+        <if test="headImg!=null "> and school.head_img = #{headImg}</if>
+        <if test="classCount!=null "> and school.class_count = #{classCount}</if>
+        <if test="adress!=null "> and school.adress = #{adress}</if>
+        <if test="schoolType!=null "> and school.school_type = #{schoolType}</if>
+        <if test="open!=null "> and school.open = #{open}</if>
+        <if test="createTime!=null "> and school.create_time = #{createTime,jdbcType=TIMESTAMP}</if>
+        <if test="schoolDesc!=null "> and school.school_desc = #{schoolDesc}</if>
+        <if test="updateTime!=null "> and school.update_time = #{updateTime,jdbcType=TIMESTAMP}</if>
+                <if test="schoolNameFirst!=null "> and school.school_name <![CDATA[like]]>
+                            concat('%',#{schoolNameFirst},'%')
+                </if>
+                <if test="openFirst!=null "> and school.open <![CDATA[=]]>
+                            #{openFirst}
+                </if>
+                <if test="createTimeFirst!=null "> and school.create_time <![CDATA[>=]]>
+                        #{createTimeFirst,jdbcType=TIMESTAMP}
+                </if>
+                <if test="createTimeSecond!=null "> and school.create_time <![CDATA[<=]]>
+                        #{createTimeSecond,jdbcType=TIMESTAMP}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertSchool" parameterType="School" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into school (
+    <if test="id!=null">`id`,</if>
+            `school_name`,            `head_img`,            `class_count`,            `adress`,            `school_type`,            `open`,            `create_time`,            `school_desc`,            `update_time`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="schoolName==null">
+                         ''
+                </when>
+                <otherwise>#{schoolName}</otherwise>
+            </choose>,            <choose>
+                <when test="headImg==null">
+                         ''
+                </when>
+                <otherwise>#{headImg}</otherwise>
+            </choose>,            <choose>
+                <when test="classCount==null">
+                         '0'
+                </when>
+                <otherwise>#{classCount}</otherwise>
+            </choose>,            <choose>
+                <when test="adress==null">
+                    NULL
+                </when>
+                <otherwise>#{adress}</otherwise>
+            </choose>,            <choose>
+                <when test="schoolType==null">
+                         '0'
+                </when>
+                <otherwise>#{schoolType}</otherwise>
+            </choose>,            <choose>
+                <when test="open==null">
+                         '0'
+                </when>
+                <otherwise>#{open}</otherwise>
+            </choose>,            <choose>
+                <when test="createTime==null">
+                    NULL
+                </when>
+                <otherwise>#{createTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="schoolDesc==null">
+                    NULL
+                </when>
+                <otherwise>#{schoolDesc}</otherwise>
+            </choose>,            <choose>
+                <when test="updateTime==null">
+                    NULL
+                </when>
+                <otherwise>#{updateTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getSchool" parameterType="hashmap" resultType="School">
+        select <include refid="selectSqlSchool"/> from school school where 1=1 <include refid="whereSqlSchool"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getSchoolList" parameterType="hashmap" resultType="School">
+        select <include refid="selectSqlSchool"/> from school school where 1=1 <include refid="whereSqlSchool"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getSchoolListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from school school
+        where 1=1 <include refid="whereSqlSchool"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateSchool" parameterType="School">
+        update school school set
+                <choose>
+                    <when test="schoolName!=null">school.school_name=#{schoolName},</when>
+                    <otherwise>
+                        school.school_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="headImg!=null">school.head_img=#{headImg},</when>
+                    <otherwise>
+                        school.head_img='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="classCount!=null">school.class_count=#{classCount},</when>
+                    <otherwise>
+                        school.class_count=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="adress!=null">school.adress=#{adress},</when>
+                    <otherwise>
+                        school.adress=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="schoolType!=null">school.school_type=#{schoolType},</when>
+                    <otherwise>
+                        school.school_type=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="open!=null">school.open=#{open},</when>
+                    <otherwise>
+                        school.open='0',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">school.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        school.create_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="schoolDesc!=null">school.school_desc=#{schoolDesc},</when>
+                    <otherwise>
+                        school.school_desc=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">school.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        school.update_time=NULL,
+                    </otherwise>
+                </choose>
+                school.id = id
+        where 1=1
+            and school.id = #{id}
+
+    </update>
+    <update id="updateSchoolWithoutNull" parameterType="School">
+        update school school set
+                <choose>
+                    <when test="schoolName!=null">school.school_name=#{schoolName},</when>
+                </choose>
+                <choose>
+                    <when test="headImg!=null">school.head_img=#{headImg},</when>
+                </choose>
+                <choose>
+                    <when test="classCount!=null">school.class_count=#{classCount},</when>
+                </choose>
+                <choose>
+                    <when test="adress!=null">school.adress=#{adress},</when>
+                </choose>
+                <choose>
+                    <when test="schoolType!=null">school.school_type=#{schoolType},</when>
+                </choose>
+                <choose>
+                    <when test="open!=null">school.open=#{open},</when>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">school.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="schoolDesc!=null">school.school_desc=#{schoolDesc},</when>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">school.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+            school.id = id
+        where 1=1
+            and school.id = #{id}
+
+    </update>
+    <update id="updateSchoolByWhereSql" parameterType="hashmap">
+        update school school set
+                <choose><when test="schoolName!=null">school.school_name=#{schoolName},</when></choose>
+                <choose><when test="headImg!=null">school.head_img=#{headImg},</when></choose>
+                <choose><when test="classCount!=null">school.class_count=#{classCount},</when></choose>
+                <choose><when test="adress!=null">school.adress=#{adress},</when></choose>
+                <choose><when test="schoolType!=null">school.school_type=#{schoolType},</when></choose>
+                <choose><when test="open!=null">school.open=#{open},</when></choose>
+                <choose><when test="createTime!=null">school.create_time=#{createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="schoolDesc!=null">school.school_desc=#{schoolDesc},</when></choose>
+                <choose><when test="updateTime!=null">school.update_time=#{updateTime,jdbcType=TIMESTAMP},</when></choose>
+            school.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateSchool">
+        truncate table school
+    </delete>
+
+    <delete id="deleteSchool" parameterType="hashmap">
+        delete school from school school where 1=1
+            and school.id = #{id}
+    </delete>
+
+    <delete id="deleteSchoolList" parameterType="hashmap">
+        delete school from school school where
+        <include refid="whereSqlSchool"/>
+    </delete>
+
+    <delete id="deleteSchoolByWhereSql" parameterType="hashmap">
+        delete school from school school where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteSchool" parameterType="java.util.List">
+        delete school from school school where school.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteSchoolList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete school from school school where
+            1=1
+                    and school.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertSchool" parameterType="java.util.List">
+        insert into school (
+            `school_name`,
+            `head_img`,
+            `class_count`,
+            `adress`,
+            `school_type`,
+            `open`,
+            `create_time`,
+            `school_desc`,
+            `update_time`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.schoolName==null">  ''  </when><otherwise>#{item.schoolName}</otherwise></choose> ,
+                <choose><when test="item.headImg==null">  ''  </when><otherwise>#{item.headImg}</otherwise></choose> ,
+                <choose><when test="item.classCount==null">  '0'  </when><otherwise>#{item.classCount}</otherwise></choose> ,
+                <choose><when test="item.adress==null">  NULL  </when><otherwise>#{item.adress}</otherwise></choose> ,
+                <choose><when test="item.schoolType==null">  '0'  </when><otherwise>#{item.schoolType}</otherwise></choose> ,
+                <choose><when test="item.open==null">  '0'  </when><otherwise>#{item.open}</otherwise></choose> ,
+                <choose><when test="item.createTime==null">NULL</when><otherwise>#{item.createTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.schoolDesc==null">  NULL  </when><otherwise>#{item.schoolDesc}</otherwise></choose> ,
+                <choose><when test="item.updateTime==null">NULL</when><otherwise>#{item.updateTime,jdbcType=TIMESTAMP}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateSchool"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update school school
+            <set>
+                <choose><when test="item.schoolName!=null">school.school_name=#{item.schoolName},</when></choose>
+                <choose><when test="item.headImg!=null">school.head_img=#{item.headImg},</when></choose>
+                <choose><when test="item.classCount!=null">school.class_count=#{item.classCount},</when></choose>
+                <choose><when test="item.adress!=null">school.adress=#{item.adress},</when></choose>
+                <choose><when test="item.schoolType!=null">school.school_type=#{item.schoolType},</when></choose>
+                <choose><when test="item.open!=null">school.open=#{item.open},</when></choose>
+                <choose><when test="item.createTime!=null">school.create_time=#{item.createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.schoolDesc!=null">school.school_desc=#{item.schoolDesc},</when></choose>
+                <choose><when test="item.updateTime!=null">school.update_time=#{item.updateTime,jdbcType=TIMESTAMP},</when></choose>
+                    school.id = id
+            </set>
+            where 1=1
+                and school.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

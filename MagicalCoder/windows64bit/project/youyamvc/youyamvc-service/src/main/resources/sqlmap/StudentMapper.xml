@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="StudentMapper">
+    <!-- Student -->
+    <sql id="createTable">
+    DROP TABLE `student`;
+    CREATE TABLE `student` (
+ UNIQUE KEY `uniq_name` (`name`) ,
+        `name` varchar(50) COMMENT '学生名称'  DEFAULT  '' ,
+
+        `class_id` bigint(20) COMMENT '所属班级'  DEFAULT  NULL ,
+ UNIQUE KEY `uniq_sex` (`sex`) ,
+        `sex` tinyint(2) NOT NULL  COMMENT '性别'  DEFAULT  '0' ,
+        PRIMARY KEY (`id`) ,
+        `id` int(20) NOT NULL  AUTO_INCREMENT  COMMENT '主键' ,
+ KEY (`admin_user_id`) ,
+        `admin_user_id` bigint(20) COMMENT '管理员'  DEFAULT  NULL ,
+
+        `create_time` datetime COMMENT '创建时间'  ,
+
+        `update_time` datetime COMMENT '更新时间'  
+    )
+    </sql>
+    <sql id="selectSqlStudent">
+        student.name ,
+        student.class_id classId,
+        student.sex ,
+        student.id ,
+        student.admin_user_id adminUserId,
+        student.create_time createTime,
+        student.update_time updateTime
+    </sql>
+
+   <sql id="whereSqlStudent">
+        <if test="name!=null "> and student.name = #{name}</if>
+        <if test="classId!=null "> and student.class_id = #{classId}</if>
+        <if test="sex!=null "> and student.sex = #{sex}</if>
+        <if test="id!=null "> and student.id = #{id}</if>
+        <if test="adminUserId!=null "> and student.admin_user_id = #{adminUserId}</if>
+        <if test="createTime!=null "> and student.create_time = #{createTime,jdbcType=TIMESTAMP}</if>
+        <if test="updateTime!=null "> and student.update_time = #{updateTime,jdbcType=TIMESTAMP}</if>
+                <if test="nameFirst!=null "> and student.name <![CDATA[=]]>
+                            #{nameFirst}
+                </if>
+                <if test="classIdFirst!=null "> and student.class_id <![CDATA[=]]>
+                            #{classIdFirst}
+                </if>
+                <if test="sexFirst!=null "> and student.sex <![CDATA[=]]>
+                            #{sexFirst}
+                </if>
+                <if test="adminUserIdFirst!=null "> and student.admin_user_id <![CDATA[=]]>
+                            #{adminUserIdFirst}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertStudent" parameterType="Student" >
+        <selectKey resultType="Integer" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into student (
+    <if test="id!=null">`id`,</if>
+            `name`,            `class_id`,            `sex`,            `admin_user_id`,            `create_time`,            `update_time`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="name==null">
+                         ''
+                </when>
+                <otherwise>#{name}</otherwise>
+            </choose>,            <choose>
+                <when test="classId==null">
+                    NULL
+                </when>
+                <otherwise>#{classId}</otherwise>
+            </choose>,            <choose>
+                <when test="sex==null">
+                         '0'
+                </when>
+                <otherwise>#{sex}</otherwise>
+            </choose>,            <choose>
+                <when test="adminUserId==null">
+                    NULL
+                </when>
+                <otherwise>#{adminUserId}</otherwise>
+            </choose>,            <choose>
+                <when test="createTime==null">
+                    NULL
+                </when>
+                <otherwise>#{createTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="updateTime==null">
+                    NULL
+                </when>
+                <otherwise>#{updateTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getStudent" parameterType="hashmap" resultType="Student">
+        select <include refid="selectSqlStudent"/> from student student where 1=1 <include refid="whereSqlStudent"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getStudentList" parameterType="hashmap" resultType="Student">
+        select <include refid="selectSqlStudent"/> from student student where 1=1 <include refid="whereSqlStudent"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getStudentListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from student student
+        where 1=1 <include refid="whereSqlStudent"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateStudent" parameterType="Student">
+        update student student set
+                <choose>
+                    <when test="name!=null">student.name=#{name},</when>
+                    <otherwise>
+                        student.name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="classId!=null">student.class_id=#{classId},</when>
+                    <otherwise>
+                        student.class_id=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="sex!=null">student.sex=#{sex},</when>
+                    <otherwise>
+                        student.sex=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="adminUserId!=null">student.admin_user_id=#{adminUserId},</when>
+                    <otherwise>
+                        student.admin_user_id=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">student.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        student.create_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">student.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        student.update_time=NULL,
+                    </otherwise>
+                </choose>
+                student.id = id
+        where 1=1
+            and student.id = #{id}
+
+    </update>
+    <update id="updateStudentWithoutNull" parameterType="Student">
+        update student student set
+                <choose>
+                    <when test="name!=null">student.name=#{name},</when>
+                </choose>
+                <choose>
+                    <when test="classId!=null">student.class_id=#{classId},</when>
+                </choose>
+                <choose>
+                    <when test="sex!=null">student.sex=#{sex},</when>
+                </choose>
+                <choose>
+                    <when test="adminUserId!=null">student.admin_user_id=#{adminUserId},</when>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">student.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">student.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+            student.id = id
+        where 1=1
+            and student.id = #{id}
+
+    </update>
+    <update id="updateStudentByWhereSql" parameterType="hashmap">
+        update student student set
+                <choose><when test="name!=null">student.name=#{name},</when></choose>
+                <choose><when test="classId!=null">student.class_id=#{classId},</when></choose>
+                <choose><when test="sex!=null">student.sex=#{sex},</when></choose>
+                <choose><when test="adminUserId!=null">student.admin_user_id=#{adminUserId},</when></choose>
+                <choose><when test="createTime!=null">student.create_time=#{createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="updateTime!=null">student.update_time=#{updateTime,jdbcType=TIMESTAMP},</when></choose>
+            student.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateStudent">
+        truncate table student
+    </delete>
+
+    <delete id="deleteStudent" parameterType="hashmap">
+        delete student from student student where 1=1
+            and student.id = #{id}
+    </delete>
+
+    <delete id="deleteStudentList" parameterType="hashmap">
+        delete student from student student where
+        <include refid="whereSqlStudent"/>
+    </delete>
+
+    <delete id="deleteStudentByWhereSql" parameterType="hashmap">
+        delete student from student student where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteStudent" parameterType="java.util.List">
+        delete student from student student where student.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteStudentList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete student from student student where
+            1=1
+                    and student.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertStudent" parameterType="java.util.List">
+        insert into student (
+            `name`,
+            `class_id`,
+            `sex`,
+            `admin_user_id`,
+            `create_time`,
+            `update_time`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.name==null">  ''  </when><otherwise>#{item.name}</otherwise></choose> ,
+                <choose><when test="item.classId==null">  NULL  </when><otherwise>#{item.classId}</otherwise></choose> ,
+                <choose><when test="item.sex==null">  '0'  </when><otherwise>#{item.sex}</otherwise></choose> ,
+                <choose><when test="item.adminUserId==null">  NULL  </when><otherwise>#{item.adminUserId}</otherwise></choose> ,
+                <choose><when test="item.createTime==null">NULL</when><otherwise>#{item.createTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.updateTime==null">NULL</when><otherwise>#{item.updateTime,jdbcType=TIMESTAMP}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateStudent"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update student student
+            <set>
+                <choose><when test="item.name!=null">student.name=#{item.name},</when></choose>
+                <choose><when test="item.classId!=null">student.class_id=#{item.classId},</when></choose>
+                <choose><when test="item.sex!=null">student.sex=#{item.sex},</when></choose>
+                <choose><when test="item.adminUserId!=null">student.admin_user_id=#{item.adminUserId},</when></choose>
+                <choose><when test="item.createTime!=null">student.create_time=#{item.createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.updateTime!=null">student.update_time=#{item.updateTime,jdbcType=TIMESTAMP},</when></choose>
+                    student.id = id
+            </set>
+            where 1=1
+                and student.id = #{item.id}
+        </foreach>
+    </update>
+
+<!-- 外键字段一对一关联查询模块 begin-->
+    <sql id="fromForeignTable">
+        <if test="">
+            ,classes classes
+        </if>
+        <if test="">
+            ,admin_user adminUser
+        </if>
+    </sql>
+    <sql id="whereForeignDbField">
+            <if test="">
+                and student.class_id = classes.id
+            </if>
+            <if test="">
+                and student.admin_user_id = adminUser.id
+            </if>
+    </sql>
+    <sql id="whereForeignFormQuery">
+    </sql>
+    <select id="getStudentOneToOneRelateList" parameterType="hashmap" resultType="Student">
+        select <include refid="selectSqlStudent"/>
+        from student student <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlStudent"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+        <if test="whereSql!=null"> ${whereSql}</if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </select>
+    <select id="getStudentOneToOneRelateListCount" parameterType="hashmap" resultType="int">
+        select count(1)
+        from student student <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlStudent"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+    </select>
+<!-- 外键字段一对一关联查询模块 end-->
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

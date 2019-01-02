@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="ClassesMapper">
+    <!-- Classes -->
+    <sql id="createTable">
+    DROP TABLE `classes`;
+    CREATE TABLE `classes` (
+        PRIMARY KEY (`id`) , KEY (`id`) , UNIQUE KEY `uniq_id` (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '班级主键' ,
+
+        `class_name` varchar(50) COMMENT '班级名称'  DEFAULT  '' ,
+
+        `student_count` int(4) COMMENT '班级学生人数'  DEFAULT  '0' ,
+
+        `school_id` bigint(20) COMMENT '学校id'  DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlClasses">
+        classes.id ,
+        classes.class_name className,
+        classes.student_count studentCount,
+        classes.school_id schoolId
+    </sql>
+
+   <sql id="whereSqlClasses">
+        <if test="id!=null "> and classes.id = #{id}</if>
+        <if test="className!=null "> and classes.class_name = #{className}</if>
+        <if test="studentCount!=null "> and classes.student_count = #{studentCount}</if>
+        <if test="schoolId!=null "> and classes.school_id = #{schoolId}</if>
+                <if test="classNameFirst!=null "> and classes.class_name <![CDATA[=]]>
+                            #{classNameFirst}
+                </if>
+                <if test="studentCountFirst!=null "> and classes.student_count <![CDATA[=]]>
+                            #{studentCountFirst}
+                </if>
+                <if test="schoolIdFirst!=null "> and classes.school_id <![CDATA[=]]>
+                            #{schoolIdFirst}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertClasses" parameterType="Classes" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into classes (
+    <if test="id!=null">`id`,</if>
+            `class_name`,            `student_count`,            `school_id`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="className==null">
+                         ''
+                </when>
+                <otherwise>#{className}</otherwise>
+            </choose>,            <choose>
+                <when test="studentCount==null">
+                         '0'
+                </when>
+                <otherwise>#{studentCount}</otherwise>
+            </choose>,            <choose>
+                <when test="schoolId==null">
+                         '0'
+                </when>
+                <otherwise>#{schoolId}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getClasses" parameterType="hashmap" resultType="Classes">
+        select <include refid="selectSqlClasses"/> from classes classes where 1=1 <include refid="whereSqlClasses"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getClassesList" parameterType="hashmap" resultType="Classes">
+        select <include refid="selectSqlClasses"/> from classes classes where 1=1 <include refid="whereSqlClasses"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getClassesListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from classes classes
+        where 1=1 <include refid="whereSqlClasses"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateClasses" parameterType="Classes">
+        update classes classes set
+                <choose>
+                    <when test="className!=null">classes.class_name=#{className},</when>
+                    <otherwise>
+                        classes.class_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="studentCount!=null">classes.student_count=#{studentCount},</when>
+                    <otherwise>
+                        classes.student_count=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="schoolId!=null">classes.school_id=#{schoolId},</when>
+                    <otherwise>
+                        classes.school_id=0,
+                    </otherwise>
+                </choose>
+                classes.id = id
+        where 1=1
+            and classes.id = #{id}
+
+    </update>
+    <update id="updateClassesWithoutNull" parameterType="Classes">
+        update classes classes set
+                <choose>
+                    <when test="className!=null">classes.class_name=#{className},</when>
+                </choose>
+                <choose>
+                    <when test="studentCount!=null">classes.student_count=#{studentCount},</when>
+                </choose>
+                <choose>
+                    <when test="schoolId!=null">classes.school_id=#{schoolId},</when>
+                </choose>
+            classes.id = id
+        where 1=1
+            and classes.id = #{id}
+
+    </update>
+    <update id="updateClassesByWhereSql" parameterType="hashmap">
+        update classes classes set
+                <choose><when test="className!=null">classes.class_name=#{className},</when></choose>
+                <choose><when test="studentCount!=null">classes.student_count=#{studentCount},</when></choose>
+                <choose><when test="schoolId!=null">classes.school_id=#{schoolId},</when></choose>
+            classes.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateClasses">
+        truncate table classes
+    </delete>
+
+    <delete id="deleteClasses" parameterType="hashmap">
+        delete classes from classes classes where 1=1
+            and classes.id = #{id}
+    </delete>
+
+    <delete id="deleteClassesList" parameterType="hashmap">
+        delete classes from classes classes where
+        <include refid="whereSqlClasses"/>
+    </delete>
+
+    <delete id="deleteClassesByWhereSql" parameterType="hashmap">
+        delete classes from classes classes where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteClasses" parameterType="java.util.List">
+        delete classes from classes classes where classes.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteClassesList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete classes from classes classes where
+            1=1
+                    and classes.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertClasses" parameterType="java.util.List">
+        insert into classes (
+            `class_name`,
+            `student_count`,
+            `school_id`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.className==null">  ''  </when><otherwise>#{item.className}</otherwise></choose> ,
+                <choose><when test="item.studentCount==null">  '0'  </when><otherwise>#{item.studentCount}</otherwise></choose> ,
+                <choose><when test="item.schoolId==null">  '0'  </when><otherwise>#{item.schoolId}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateClasses"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update classes classes
+            <set>
+                <choose><when test="item.className!=null">classes.class_name=#{item.className},</when></choose>
+                <choose><when test="item.studentCount!=null">classes.student_count=#{item.studentCount},</when></choose>
+                <choose><when test="item.schoolId!=null">classes.school_id=#{item.schoolId},</when></choose>
+                    classes.id = id
+            </set>
+            where 1=1
+                and classes.id = #{item.id}
+        </foreach>
+    </update>
+
+<!-- 外键字段一对一关联查询模块 begin-->
+    <sql id="fromForeignTable">
+        <if test="">
+            ,school school
+        </if>
+    </sql>
+    <sql id="whereForeignDbField">
+            <if test="">
+                and classes.school_id = school.id
+            </if>
+    </sql>
+    <sql id="whereForeignFormQuery">
+    </sql>
+    <select id="getClassesOneToOneRelateList" parameterType="hashmap" resultType="Classes">
+        select <include refid="selectSqlClasses"/>
+        from classes classes <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlClasses"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+        <if test="whereSql!=null"> ${whereSql}</if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </select>
+    <select id="getClassesOneToOneRelateListCount" parameterType="hashmap" resultType="int">
+        select count(1)
+        from classes classes <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlClasses"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+    </select>
+<!-- 外键字段一对一关联查询模块 end-->
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="TeacherMapper">
+    <!-- Teacher -->
+    <sql id="createTable">
+    DROP TABLE `teacher`;
+    CREATE TABLE `teacher` (
+        PRIMARY KEY (`id`) , KEY (`id`) , UNIQUE KEY `uniq_id` (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '老师主键' ,
+
+        `teacher_name` varchar(50) COMMENT '老师名称'  DEFAULT  '' ,
+
+        `age` int(4) COMMENT '老师年龄'  DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlTeacher">
+        teacher.id ,
+        teacher.teacher_name teacherName,
+        teacher.age 
+    </sql>
+
+   <sql id="whereSqlTeacher">
+        <if test="id!=null "> and teacher.id = #{id}</if>
+        <if test="teacherName!=null "> and teacher.teacher_name = #{teacherName}</if>
+        <if test="age!=null "> and teacher.age = #{age}</if>
+                <if test="teacherNameFirst!=null "> and teacher.teacher_name <![CDATA[=]]>
+                            #{teacherNameFirst}
+                </if>
+                <if test="ageFirst!=null "> and teacher.age <![CDATA[=]]>
+                            #{ageFirst}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertTeacher" parameterType="Teacher" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into teacher (
+    <if test="id!=null">`id`,</if>
+            `teacher_name`,            `age`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="teacherName==null">
+                         ''
+                </when>
+                <otherwise>#{teacherName}</otherwise>
+            </choose>,            <choose>
+                <when test="age==null">
+                         '0'
+                </when>
+                <otherwise>#{age}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getTeacher" parameterType="hashmap" resultType="Teacher">
+        select <include refid="selectSqlTeacher"/> from teacher teacher where 1=1 <include refid="whereSqlTeacher"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getTeacherList" parameterType="hashmap" resultType="Teacher">
+        select <include refid="selectSqlTeacher"/> from teacher teacher where 1=1 <include refid="whereSqlTeacher"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getTeacherListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from teacher teacher
+        where 1=1 <include refid="whereSqlTeacher"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateTeacher" parameterType="Teacher">
+        update teacher teacher set
+                <choose>
+                    <when test="teacherName!=null">teacher.teacher_name=#{teacherName},</when>
+                    <otherwise>
+                        teacher.teacher_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="age!=null">teacher.age=#{age},</when>
+                    <otherwise>
+                        teacher.age=0,
+                    </otherwise>
+                </choose>
+                teacher.id = id
+        where 1=1
+            and teacher.id = #{id}
+
+    </update>
+    <update id="updateTeacherWithoutNull" parameterType="Teacher">
+        update teacher teacher set
+                <choose>
+                    <when test="teacherName!=null">teacher.teacher_name=#{teacherName},</when>
+                </choose>
+                <choose>
+                    <when test="age!=null">teacher.age=#{age},</when>
+                </choose>
+            teacher.id = id
+        where 1=1
+            and teacher.id = #{id}
+
+    </update>
+    <update id="updateTeacherByWhereSql" parameterType="hashmap">
+        update teacher teacher set
+                <choose><when test="teacherName!=null">teacher.teacher_name=#{teacherName},</when></choose>
+                <choose><when test="age!=null">teacher.age=#{age},</when></choose>
+            teacher.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateTeacher">
+        truncate table teacher
+    </delete>
+
+    <delete id="deleteTeacher" parameterType="hashmap">
+        delete teacher from teacher teacher where 1=1
+            and teacher.id = #{id}
+    </delete>
+
+    <delete id="deleteTeacherList" parameterType="hashmap">
+        delete teacher from teacher teacher where
+        <include refid="whereSqlTeacher"/>
+    </delete>
+
+    <delete id="deleteTeacherByWhereSql" parameterType="hashmap">
+        delete teacher from teacher teacher where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteTeacher" parameterType="java.util.List">
+        delete teacher from teacher teacher where teacher.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteTeacherList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete teacher from teacher teacher where
+            1=1
+                    and teacher.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertTeacher" parameterType="java.util.List">
+        insert into teacher (
+            `teacher_name`,
+            `age`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.teacherName==null">  ''  </when><otherwise>#{item.teacherName}</otherwise></choose> ,
+                <choose><when test="item.age==null">  '0'  </when><otherwise>#{item.age}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateTeacher"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update teacher teacher
+            <set>
+                <choose><when test="item.teacherName!=null">teacher.teacher_name=#{item.teacherName},</when></choose>
+                <choose><when test="item.age!=null">teacher.age=#{item.age},</when></choose>
+                    teacher.id = id
+            </set>
+            where 1=1
+                and teacher.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="DictMapper">
+    <!-- Dict -->
+    <sql id="createTable">
+    DROP TABLE `dict`;
+    CREATE TABLE `dict` (
+        PRIMARY KEY (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT ,
+
+        `dict_key` varchar(50) DEFAULT  '' ,
+
+        `dict_value` varchar(1000) DEFAULT  '' ,
+
+        `dict_type` int(2) DEFAULT  '0' ,
+
+        `dict_desc` varchar(50) DEFAULT  '' ,
+
+        `dict_order` int(4) DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlDict">
+        dict.id ,
+        dict.dict_key dictKey,
+        dict.dict_value dictValue,
+        dict.dict_type dictType,
+        dict.dict_desc dictDesc,
+        dict.dict_order dictOrder
+    </sql>
+
+   <sql id="whereSqlDict">
+        <if test="id!=null "> and dict.id = #{id}</if>
+        <if test="dictKey!=null "> and dict.dict_key = #{dictKey}</if>
+        <if test="dictValue!=null "> and dict.dict_value = #{dictValue}</if>
+        <if test="dictType!=null "> and dict.dict_type = #{dictType}</if>
+        <if test="dictDesc!=null "> and dict.dict_desc = #{dictDesc}</if>
+        <if test="dictOrder!=null "> and dict.dict_order = #{dictOrder}</if>
+                <if test="dictKeyFirst!=null "> and dict.dict_key <![CDATA[=]]>
+                            #{dictKeyFirst}
+                </if>
+                <if test="dictValueFirst!=null "> and dict.dict_value <![CDATA[=]]>
+                            #{dictValueFirst}
+                </if>
+                <if test="dictTypeFirst!=null "> and dict.dict_type <![CDATA[=]]>
+                            #{dictTypeFirst}
+                </if>
+                <if test="dictDescFirst!=null "> and dict.dict_desc <![CDATA[=]]>
+                            #{dictDescFirst}
+                </if>
+                <if test="dictOrderFirst!=null "> and dict.dict_order <![CDATA[=]]>
+                            #{dictOrderFirst}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertDict" parameterType="Dict" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into dict (
+    <if test="id!=null">`id`,</if>
+            `dict_key`,            `dict_value`,            `dict_type`,            `dict_desc`,            `dict_order`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="dictKey==null">
+                         ''
+                </when>
+                <otherwise>#{dictKey}</otherwise>
+            </choose>,            <choose>
+                <when test="dictValue==null">
+                         ''
+                </when>
+                <otherwise>#{dictValue}</otherwise>
+            </choose>,            <choose>
+                <when test="dictType==null">
+                         '0'
+                </when>
+                <otherwise>#{dictType}</otherwise>
+            </choose>,            <choose>
+                <when test="dictDesc==null">
+                         ''
+                </when>
+                <otherwise>#{dictDesc}</otherwise>
+            </choose>,            <choose>
+                <when test="dictOrder==null">
+                         '0'
+                </when>
+                <otherwise>#{dictOrder}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getDict" parameterType="hashmap" resultType="Dict">
+        select <include refid="selectSqlDict"/> from dict dict where 1=1 <include refid="whereSqlDict"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getDictList" parameterType="hashmap" resultType="Dict">
+        select <include refid="selectSqlDict"/> from dict dict where 1=1 <include refid="whereSqlDict"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getDictListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from dict dict
+        where 1=1 <include refid="whereSqlDict"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateDict" parameterType="Dict">
+        update dict dict set
+                <choose>
+                    <when test="dictKey!=null">dict.dict_key=#{dictKey},</when>
+                    <otherwise>
+                        dict.dict_key='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="dictValue!=null">dict.dict_value=#{dictValue},</when>
+                    <otherwise>
+                        dict.dict_value='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="dictType!=null">dict.dict_type=#{dictType},</when>
+                    <otherwise>
+                        dict.dict_type=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="dictDesc!=null">dict.dict_desc=#{dictDesc},</when>
+                    <otherwise>
+                        dict.dict_desc='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="dictOrder!=null">dict.dict_order=#{dictOrder},</when>
+                    <otherwise>
+                        dict.dict_order=0,
+                    </otherwise>
+                </choose>
+                dict.id = id
+        where 1=1
+            and dict.id = #{id}
+
+    </update>
+    <update id="updateDictWithoutNull" parameterType="Dict">
+        update dict dict set
+                <choose>
+                    <when test="dictKey!=null">dict.dict_key=#{dictKey},</when>
+                </choose>
+                <choose>
+                    <when test="dictValue!=null">dict.dict_value=#{dictValue},</when>
+                </choose>
+                <choose>
+                    <when test="dictType!=null">dict.dict_type=#{dictType},</when>
+                </choose>
+                <choose>
+                    <when test="dictDesc!=null">dict.dict_desc=#{dictDesc},</when>
+                </choose>
+                <choose>
+                    <when test="dictOrder!=null">dict.dict_order=#{dictOrder},</when>
+                </choose>
+            dict.id = id
+        where 1=1
+            and dict.id = #{id}
+
+    </update>
+    <update id="updateDictByWhereSql" parameterType="hashmap">
+        update dict dict set
+                <choose><when test="dictKey!=null">dict.dict_key=#{dictKey},</when></choose>
+                <choose><when test="dictValue!=null">dict.dict_value=#{dictValue},</when></choose>
+                <choose><when test="dictType!=null">dict.dict_type=#{dictType},</when></choose>
+                <choose><when test="dictDesc!=null">dict.dict_desc=#{dictDesc},</when></choose>
+                <choose><when test="dictOrder!=null">dict.dict_order=#{dictOrder},</when></choose>
+            dict.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateDict">
+        truncate table dict
+    </delete>
+
+    <delete id="deleteDict" parameterType="hashmap">
+        delete dict from dict dict where 1=1
+            and dict.id = #{id}
+    </delete>
+
+    <delete id="deleteDictList" parameterType="hashmap">
+        delete dict from dict dict where
+        <include refid="whereSqlDict"/>
+    </delete>
+
+    <delete id="deleteDictByWhereSql" parameterType="hashmap">
+        delete dict from dict dict where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteDict" parameterType="java.util.List">
+        delete dict from dict dict where dict.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteDictList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete dict from dict dict where
+            1=1
+                    and dict.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertDict" parameterType="java.util.List">
+        insert into dict (
+            `dict_key`,
+            `dict_value`,
+            `dict_type`,
+            `dict_desc`,
+            `dict_order`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.dictKey==null">  ''  </when><otherwise>#{item.dictKey}</otherwise></choose> ,
+                <choose><when test="item.dictValue==null">  ''  </when><otherwise>#{item.dictValue}</otherwise></choose> ,
+                <choose><when test="item.dictType==null">  '0'  </when><otherwise>#{item.dictType}</otherwise></choose> ,
+                <choose><when test="item.dictDesc==null">  ''  </when><otherwise>#{item.dictDesc}</otherwise></choose> ,
+                <choose><when test="item.dictOrder==null">  '0'  </when><otherwise>#{item.dictOrder}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateDict"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update dict dict
+            <set>
+                <choose><when test="item.dictKey!=null">dict.dict_key=#{item.dictKey},</when></choose>
+                <choose><when test="item.dictValue!=null">dict.dict_value=#{item.dictValue},</when></choose>
+                <choose><when test="item.dictType!=null">dict.dict_type=#{item.dictType},</when></choose>
+                <choose><when test="item.dictDesc!=null">dict.dict_desc=#{item.dictDesc},</when></choose>
+                <choose><when test="item.dictOrder!=null">dict.dict_order=#{item.dictOrder},</when></choose>
+                    dict.id = id
+            </set>
+            where 1=1
+                and dict.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="AdminUserMapper">
+    <!-- AdminUser -->
+    <sql id="createTable">
+    DROP TABLE `admin_user`;
+    CREATE TABLE `admin_user` (
+        PRIMARY KEY (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '主键' ,
+ KEY (`user_name`) ,
+        `user_name` varchar(20) COMMENT '用户名'  DEFAULT  '' ,
+
+        `password` varchar(50) COMMENT '密码'  DEFAULT  '' ,
+
+        `real_name` varchar(25) COMMENT '真名'  DEFAULT  '' ,
+
+        `email` varchar(30) COMMENT '邮箱'  DEFAULT  '' ,
+
+        `telephone` varchar(20) COMMENT '座机号'  DEFAULT  '' ,
+
+        `mobile_phone` varchar(20) COMMENT '手机号'  DEFAULT  '' ,
+
+        `address` varchar(100) COMMENT '手机号'  DEFAULT  '' ,
+
+        `create_time` datetime COMMENT '创建时间'  ,
+
+        `update_time` datetime COMMENT '更新时间'  ,
+
+        `super_admin` tinyint(2) COMMENT '是否超级管理员'  DEFAULT  '0' ,
+
+        `role_id` bigint(20) COMMENT '角色'  DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlAdminUser">
+        adminUser.id ,
+        adminUser.user_name userName,
+        adminUser.password ,
+        adminUser.real_name realName,
+        adminUser.email ,
+        adminUser.telephone ,
+        adminUser.mobile_phone mobilePhone,
+        adminUser.address ,
+        adminUser.create_time createTime,
+        adminUser.update_time updateTime,
+        adminUser.super_admin superAdmin,
+        adminUser.role_id roleId
+    </sql>
+
+   <sql id="whereSqlAdminUser">
+        <if test="id!=null "> and adminUser.id = #{id}</if>
+        <if test="userName!=null "> and adminUser.user_name = #{userName}</if>
+        <if test="password!=null "> and adminUser.password = #{password}</if>
+        <if test="realName!=null "> and adminUser.real_name = #{realName}</if>
+        <if test="email!=null "> and adminUser.email = #{email}</if>
+        <if test="telephone!=null "> and adminUser.telephone = #{telephone}</if>
+        <if test="mobilePhone!=null "> and adminUser.mobile_phone = #{mobilePhone}</if>
+        <if test="address!=null "> and adminUser.address = #{address}</if>
+        <if test="createTime!=null "> and adminUser.create_time = #{createTime,jdbcType=TIMESTAMP}</if>
+        <if test="updateTime!=null "> and adminUser.update_time = #{updateTime,jdbcType=TIMESTAMP}</if>
+        <if test="superAdmin!=null "> and adminUser.super_admin = #{superAdmin}</if>
+        <if test="roleId!=null "> and adminUser.role_id = #{roleId}</if>
+                <if test="idFirst!=null "> and adminUser.id <![CDATA[=]]>
+                            #{idFirst}
+                </if>
+                <if test="userNameFirst!=null "> and adminUser.user_name <![CDATA[like]]>
+                            concat('%',#{userNameFirst},'%')
+                </if>
+                <if test="realNameFirst!=null "> and adminUser.real_name <![CDATA[like]]>
+                            concat('%',#{realNameFirst},'%')
+                </if>
+                <if test="emailFirst!=null "> and adminUser.email <![CDATA[=]]>
+                            #{emailFirst}
+                </if>
+                <if test="createTimeFirst!=null "> and adminUser.create_time <![CDATA[>=]]>
+                        #{createTimeFirst,jdbcType=TIMESTAMP}
+                </if>
+                <if test="createTimeSecond!=null "> and adminUser.create_time <![CDATA[<=]]>
+                        #{createTimeSecond,jdbcType=TIMESTAMP}
+                </if>
+                <if test="updateTimeFirst!=null "> and adminUser.update_time <![CDATA[>=]]>
+                        #{updateTimeFirst,jdbcType=TIMESTAMP}
+                </if>
+                <if test="updateTimeSecond!=null "> and adminUser.update_time <![CDATA[<=]]>
+                        #{updateTimeSecond,jdbcType=TIMESTAMP}
+                </if>
+                <if test="superAdminFirst!=null "> and adminUser.super_admin <![CDATA[=]]>
+                            #{superAdminFirst}
+                </if>
+                <if test="roleIdFirst!=null "> and adminUser.role_id <![CDATA[=]]>
+                            #{roleIdFirst}
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertAdminUser" parameterType="AdminUser" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into admin_user (
+    <if test="id!=null">`id`,</if>
+            `user_name`,            `password`,            `real_name`,            `email`,            `telephone`,            `mobile_phone`,            `address`,            `create_time`,            `update_time`,            `super_admin`,            `role_id`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="userName==null">
+                         ''
+                </when>
+                <otherwise>#{userName}</otherwise>
+            </choose>,            <choose>
+                <when test="password==null">
+                         ''
+                </when>
+                <otherwise>#{password}</otherwise>
+            </choose>,            <choose>
+                <when test="realName==null">
+                         ''
+                </when>
+                <otherwise>#{realName}</otherwise>
+            </choose>,            <choose>
+                <when test="email==null">
+                         ''
+                </when>
+                <otherwise>#{email}</otherwise>
+            </choose>,            <choose>
+                <when test="telephone==null">
+                         ''
+                </when>
+                <otherwise>#{telephone}</otherwise>
+            </choose>,            <choose>
+                <when test="mobilePhone==null">
+                         ''
+                </when>
+                <otherwise>#{mobilePhone}</otherwise>
+            </choose>,            <choose>
+                <when test="address==null">
+                         ''
+                </when>
+                <otherwise>#{address}</otherwise>
+            </choose>,            <choose>
+                <when test="createTime==null">
+                    NULL
+                </when>
+                <otherwise>#{createTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="updateTime==null">
+                    NULL
+                </when>
+                <otherwise>#{updateTime,jdbcType=TIMESTAMP}</otherwise>
+            </choose>,            <choose>
+                <when test="superAdmin==null">
+                         '0'
+                </when>
+                <otherwise>#{superAdmin}</otherwise>
+            </choose>,            <choose>
+                <when test="roleId==null">
+                         '0'
+                </when>
+                <otherwise>#{roleId}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getAdminUser" parameterType="hashmap" resultType="AdminUser">
+        select <include refid="selectSqlAdminUser"/> from admin_user adminUser where 1=1 <include refid="whereSqlAdminUser"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getAdminUserList" parameterType="hashmap" resultType="AdminUser">
+        select <include refid="selectSqlAdminUser"/> from admin_user adminUser where 1=1 <include refid="whereSqlAdminUser"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getAdminUserListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from admin_user adminUser
+        where 1=1 <include refid="whereSqlAdminUser"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateAdminUser" parameterType="AdminUser">
+        update admin_user adminUser set
+                <choose>
+                    <when test="userName!=null">adminUser.user_name=#{userName},</when>
+                    <otherwise>
+                        adminUser.user_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="password!=null">adminUser.password=#{password},</when>
+                    <otherwise>
+                        adminUser.password='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="realName!=null">adminUser.real_name=#{realName},</when>
+                    <otherwise>
+                        adminUser.real_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="email!=null">adminUser.email=#{email},</when>
+                    <otherwise>
+                        adminUser.email='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="telephone!=null">adminUser.telephone=#{telephone},</when>
+                    <otherwise>
+                        adminUser.telephone='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="mobilePhone!=null">adminUser.mobile_phone=#{mobilePhone},</when>
+                    <otherwise>
+                        adminUser.mobile_phone='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="address!=null">adminUser.address=#{address},</when>
+                    <otherwise>
+                        adminUser.address='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">adminUser.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        adminUser.create_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">adminUser.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                    <otherwise>
+                        adminUser.update_time=NULL,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="superAdmin!=null">adminUser.super_admin=#{superAdmin},</when>
+                    <otherwise>
+                        adminUser.super_admin=0,
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="roleId!=null">adminUser.role_id=#{roleId},</when>
+                    <otherwise>
+                        adminUser.role_id=0,
+                    </otherwise>
+                </choose>
+                adminUser.id = id
+        where 1=1
+            and adminUser.id = #{id}
+
+    </update>
+    <update id="updateAdminUserWithoutNull" parameterType="AdminUser">
+        update admin_user adminUser set
+                <choose>
+                    <when test="userName!=null">adminUser.user_name=#{userName},</when>
+                </choose>
+                <choose>
+                    <when test="password!=null">adminUser.password=#{password},</when>
+                </choose>
+                <choose>
+                    <when test="realName!=null">adminUser.real_name=#{realName},</when>
+                </choose>
+                <choose>
+                    <when test="email!=null">adminUser.email=#{email},</when>
+                </choose>
+                <choose>
+                    <when test="telephone!=null">adminUser.telephone=#{telephone},</when>
+                </choose>
+                <choose>
+                    <when test="mobilePhone!=null">adminUser.mobile_phone=#{mobilePhone},</when>
+                </choose>
+                <choose>
+                    <when test="address!=null">adminUser.address=#{address},</when>
+                </choose>
+                <choose>
+                    <when test="createTime!=null">adminUser.create_time=#{createTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="updateTime!=null">adminUser.update_time=#{updateTime,jdbcType=TIMESTAMP},</when>
+                </choose>
+                <choose>
+                    <when test="superAdmin!=null">adminUser.super_admin=#{superAdmin},</when>
+                </choose>
+                <choose>
+                    <when test="roleId!=null">adminUser.role_id=#{roleId},</when>
+                </choose>
+            adminUser.id = id
+        where 1=1
+            and adminUser.id = #{id}
+
+    </update>
+    <update id="updateAdminUserByWhereSql" parameterType="hashmap">
+        update admin_user adminUser set
+                <choose><when test="userName!=null">adminUser.user_name=#{userName},</when></choose>
+                <choose><when test="password!=null">adminUser.password=#{password},</when></choose>
+                <choose><when test="realName!=null">adminUser.real_name=#{realName},</when></choose>
+                <choose><when test="email!=null">adminUser.email=#{email},</when></choose>
+                <choose><when test="telephone!=null">adminUser.telephone=#{telephone},</when></choose>
+                <choose><when test="mobilePhone!=null">adminUser.mobile_phone=#{mobilePhone},</when></choose>
+                <choose><when test="address!=null">adminUser.address=#{address},</when></choose>
+                <choose><when test="createTime!=null">adminUser.create_time=#{createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="updateTime!=null">adminUser.update_time=#{updateTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="superAdmin!=null">adminUser.super_admin=#{superAdmin},</when></choose>
+                <choose><when test="roleId!=null">adminUser.role_id=#{roleId},</when></choose>
+            adminUser.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateAdminUser">
+        truncate table admin_user
+    </delete>
+
+    <delete id="deleteAdminUser" parameterType="hashmap">
+        delete adminUser from admin_user adminUser where 1=1
+            and adminUser.id = #{id}
+    </delete>
+
+    <delete id="deleteAdminUserList" parameterType="hashmap">
+        delete adminUser from admin_user adminUser where
+        <include refid="whereSqlAdminUser"/>
+    </delete>
+
+    <delete id="deleteAdminUserByWhereSql" parameterType="hashmap">
+        delete adminUser from admin_user adminUser where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteAdminUser" parameterType="java.util.List">
+        delete adminUser from admin_user adminUser where adminUser.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteAdminUserList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete adminUser from admin_user adminUser where
+            1=1
+                    and adminUser.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertAdminUser" parameterType="java.util.List">
+        insert into admin_user (
+            `user_name`,
+            `password`,
+            `real_name`,
+            `email`,
+            `telephone`,
+            `mobile_phone`,
+            `address`,
+            `create_time`,
+            `update_time`,
+            `super_admin`,
+            `role_id`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.userName==null">  ''  </when><otherwise>#{item.userName}</otherwise></choose> ,
+                <choose><when test="item.password==null">  ''  </when><otherwise>#{item.password}</otherwise></choose> ,
+                <choose><when test="item.realName==null">  ''  </when><otherwise>#{item.realName}</otherwise></choose> ,
+                <choose><when test="item.email==null">  ''  </when><otherwise>#{item.email}</otherwise></choose> ,
+                <choose><when test="item.telephone==null">  ''  </when><otherwise>#{item.telephone}</otherwise></choose> ,
+                <choose><when test="item.mobilePhone==null">  ''  </when><otherwise>#{item.mobilePhone}</otherwise></choose> ,
+                <choose><when test="item.address==null">  ''  </when><otherwise>#{item.address}</otherwise></choose> ,
+                <choose><when test="item.createTime==null">NULL</when><otherwise>#{item.createTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.updateTime==null">NULL</when><otherwise>#{item.updateTime,jdbcType=TIMESTAMP}</otherwise></choose> ,
+                <choose><when test="item.superAdmin==null">  '0'  </when><otherwise>#{item.superAdmin}</otherwise></choose> ,
+                <choose><when test="item.roleId==null">  '0'  </when><otherwise>#{item.roleId}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateAdminUser"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update admin_user adminUser
+            <set>
+                <choose><when test="item.userName!=null">adminUser.user_name=#{item.userName},</when></choose>
+                <choose><when test="item.password!=null">adminUser.password=#{item.password},</when></choose>
+                <choose><when test="item.realName!=null">adminUser.real_name=#{item.realName},</when></choose>
+                <choose><when test="item.email!=null">adminUser.email=#{item.email},</when></choose>
+                <choose><when test="item.telephone!=null">adminUser.telephone=#{item.telephone},</when></choose>
+                <choose><when test="item.mobilePhone!=null">adminUser.mobile_phone=#{item.mobilePhone},</when></choose>
+                <choose><when test="item.address!=null">adminUser.address=#{item.address},</when></choose>
+                <choose><when test="item.createTime!=null">adminUser.create_time=#{item.createTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.updateTime!=null">adminUser.update_time=#{item.updateTime,jdbcType=TIMESTAMP},</when></choose>
+                <choose><when test="item.superAdmin!=null">adminUser.super_admin=#{item.superAdmin},</when></choose>
+                <choose><when test="item.roleId!=null">adminUser.role_id=#{item.roleId},</when></choose>
+                    adminUser.id = id
+            </set>
+            where 1=1
+                and adminUser.id = #{item.id}
+        </foreach>
+    </update>
+
+<!-- 外键字段一对一关联查询模块 begin-->
+    <sql id="fromForeignTable">
+        <if test="">
+            ,role role
+        </if>
+    </sql>
+    <sql id="whereForeignDbField">
+            <if test="">
+                and adminUser.role_id = role.id
+            </if>
+    </sql>
+    <sql id="whereForeignFormQuery">
+    </sql>
+    <select id="getAdminUserOneToOneRelateList" parameterType="hashmap" resultType="AdminUser">
+        select <include refid="selectSqlAdminUser"/>
+        from admin_user adminUser <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlAdminUser"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+        <if test="whereSql!=null"> ${whereSql}</if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </select>
+    <select id="getAdminUserOneToOneRelateListCount" parameterType="hashmap" resultType="int">
+        select count(1)
+        from admin_user adminUser <include refid="fromForeignTable"/>
+        where   <include refid="whereSqlAdminUser"/>
+        <include refid="whereForeignDbField"/>
+        <include refid="whereForeignFormQuery"/>
+    </select>
+<!-- 外键字段一对一关联查询模块 end-->
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>

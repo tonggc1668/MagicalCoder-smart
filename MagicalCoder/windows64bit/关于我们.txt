@@ -1,0 +1,6 @@
+﻿更多信息请访问官方网站 http://www.magicalcoder.com
+生成的代码 放入 youyamvc中即可运行
+youyamvc代码下载地址  https://github.com/magicalcoders/youyamvc
+
+精简版 请自行下载jdk 放入jdk目录即可
+完整版 无需下载jdk 

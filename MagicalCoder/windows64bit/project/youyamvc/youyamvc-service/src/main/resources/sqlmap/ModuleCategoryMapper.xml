@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+* Created by www.magicalcoder.com
+* 如果你改变了此类 read 请将此行删除
+* 799374340@qq.com
+-->
+<mapper namespace="ModuleCategoryMapper">
+    <!-- ModuleCategory -->
+    <sql id="createTable">
+    DROP TABLE `module_category`;
+    CREATE TABLE `module_category` (
+        PRIMARY KEY (`id`) ,
+        `id` bigint(20) NOT NULL  AUTO_INCREMENT  COMMENT '主键' ,
+
+        `module_category_name` varchar(20) COMMENT '模块名称'  DEFAULT  '' ,
+
+        `sort_num` int(2) COMMENT '排序'  DEFAULT  '0' 
+    )
+    </sql>
+    <sql id="selectSqlModuleCategory">
+        moduleCategory.id ,
+        moduleCategory.module_category_name moduleCategoryName,
+        moduleCategory.sort_num sortNum
+    </sql>
+
+   <sql id="whereSqlModuleCategory">
+        <if test="id!=null "> and moduleCategory.id = #{id}</if>
+        <if test="moduleCategoryName!=null "> and moduleCategory.module_category_name = #{moduleCategoryName}</if>
+        <if test="sortNum!=null "> and moduleCategory.sort_num = #{sortNum}</if>
+                <if test="moduleCategoryNameFirst!=null "> and moduleCategory.module_category_name <![CDATA[like]]>
+                            concat('%',#{moduleCategoryNameFirst},'%')
+                </if>
+        <if test="whereSql!=null"> ${whereSql}</if>
+    </sql>
+
+    <insert id="insertModuleCategory" parameterType="ModuleCategory" >
+        <selectKey resultType="Long" order="AFTER" keyProperty="id" >
+            <choose>
+                <when test="id==null">
+                    SELECT LAST_INSERT_ID() AS id
+                </when>
+                <otherwise>SELECT #{id} as id</otherwise>
+            </choose>
+        </selectKey>
+        insert into module_category (
+    <if test="id!=null">`id`,</if>
+            `module_category_name`,            `sort_num`        )
+        values(
+            <if test="id!=null">#{id`},</if>
+            <choose>
+                <when test="moduleCategoryName==null">
+                         ''
+                </when>
+                <otherwise>#{moduleCategoryName}</otherwise>
+            </choose>,            <choose>
+                <when test="sortNum==null">
+                         '0'
+                </when>
+                <otherwise>#{sortNum}</otherwise>
+            </choose>        )
+    </insert>
+
+    <sql id="orderGroupLimit">
+        <if test="groupBy != null"> group by  ${groupBy} </if>
+        <if test="orderBy != null"> order by  ${orderBy} </if>
+        <if test="limit != null"> LIMIT #{limitIndex},#{limit} </if>
+    </sql>
+    <select id="getModuleCategory" parameterType="hashmap" resultType="ModuleCategory">
+        select <include refid="selectSqlModuleCategory"/> from module_category moduleCategory where 1=1 <include refid="whereSqlModuleCategory"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getModuleCategoryList" parameterType="hashmap" resultType="ModuleCategory">
+        select <include refid="selectSqlModuleCategory"/> from module_category moduleCategory where 1=1 <include refid="whereSqlModuleCategory"/> <include refid="orderGroupLimit"/>
+    </select>
+    <select id="getModuleCategoryListCount" parameterType="hashmap" resultType="int">
+        select count(1)  from module_category moduleCategory
+        where 1=1 <include refid="whereSqlModuleCategory"/> <if test="groupBy != null"> group by  ${groupBy} </if>
+    </select>
+
+    <update id="updateModuleCategory" parameterType="ModuleCategory">
+        update module_category moduleCategory set
+                <choose>
+                    <when test="moduleCategoryName!=null">moduleCategory.module_category_name=#{moduleCategoryName},</when>
+                    <otherwise>
+                        moduleCategory.module_category_name='',
+                    </otherwise>
+                </choose>
+                <choose>
+                    <when test="sortNum!=null">moduleCategory.sort_num=#{sortNum},</when>
+                    <otherwise>
+                        moduleCategory.sort_num=0,
+                    </otherwise>
+                </choose>
+                moduleCategory.id = id
+        where 1=1
+            and moduleCategory.id = #{id}
+
+    </update>
+    <update id="updateModuleCategoryWithoutNull" parameterType="ModuleCategory">
+        update module_category moduleCategory set
+                <choose>
+                    <when test="moduleCategoryName!=null">moduleCategory.module_category_name=#{moduleCategoryName},</when>
+                </choose>
+                <choose>
+                    <when test="sortNum!=null">moduleCategory.sort_num=#{sortNum},</when>
+                </choose>
+            moduleCategory.id = id
+        where 1=1
+            and moduleCategory.id = #{id}
+
+    </update>
+    <update id="updateModuleCategoryByWhereSql" parameterType="hashmap">
+        update module_category moduleCategory set
+                <choose><when test="moduleCategoryName!=null">moduleCategory.module_category_name=#{moduleCategoryName},</when></choose>
+                <choose><when test="sortNum!=null">moduleCategory.sort_num=#{sortNum},</when></choose>
+            moduleCategory.id = id
+        where ${whereSql}
+    </update>
+
+    <delete id="truncateModuleCategory">
+        truncate table module_category
+    </delete>
+
+    <delete id="deleteModuleCategory" parameterType="hashmap">
+        delete moduleCategory from module_category moduleCategory where 1=1
+            and moduleCategory.id = #{id}
+    </delete>
+
+    <delete id="deleteModuleCategoryList" parameterType="hashmap">
+        delete moduleCategory from module_category moduleCategory where
+        <include refid="whereSqlModuleCategory"/>
+    </delete>
+
+    <delete id="deleteModuleCategoryByWhereSql" parameterType="hashmap">
+        delete moduleCategory from module_category moduleCategory where ${whereSql}
+    </delete>
+
+    <delete id="batchDeleteModuleCategory" parameterType="java.util.List">
+        delete moduleCategory from module_category moduleCategory where moduleCategory.id in
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+    <delete id="batchDeleteModuleCategoryList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            delete moduleCategory from module_category moduleCategory where
+            1=1
+                    and moduleCategory.id = #{item.id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertModuleCategory" parameterType="java.util.List">
+        insert into module_category (
+            `module_category_name`,
+            `sort_num`
+        )
+        values
+        <foreach collection="list" item= "item" index ="index" separator=",">
+            (
+                <choose><when test="item.moduleCategoryName==null">  ''  </when><otherwise>#{item.moduleCategoryName}</otherwise></choose> ,
+                <choose><when test="item.sortNum==null">  '0'  </when><otherwise>#{item.sortNum}</otherwise></choose> 
+            )
+        </foreach >
+    </insert>
+
+    <update id="batchUpdateModuleCategory"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update module_category moduleCategory
+            <set>
+                <choose><when test="item.moduleCategoryName!=null">moduleCategory.module_category_name=#{item.moduleCategoryName},</when></choose>
+                <choose><when test="item.sortNum!=null">moduleCategory.sort_num=#{item.sortNum},</when></choose>
+                    moduleCategory.id = id
+            </set>
+            where 1=1
+                and moduleCategory.id = #{item.id}
+        </foreach>
+    </update>
+
+
+
+    <!-- sql end-->
+    <!-- 本文件对于研发人员 只读 不能修改 =================================================================================================================================================== -->
+</mapper>
